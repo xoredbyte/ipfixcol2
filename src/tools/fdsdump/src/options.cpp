@@ -11,6 +11,7 @@
 #include <iostream>
 
 #include <getopt.h>
+#include <string>
 #include <unistd.h>
 
 #include <common/common.hpp>
@@ -133,7 +134,15 @@ void Options::parse(int argc, char *argv[])
     }
 
     if (args.has('F')) {
-        m_input_filter = args.get('F');
+        if (args.get('F') == "-") {
+            std::string line;
+            while (std::getline(std::cin, line)) {
+                m_input_filter.append(line);
+                m_input_filter.append("\n");
+            }
+        } else {
+            m_input_filter = args.get('F');
+        }
     }
 
     if (args.has('A')) {
