@@ -10,6 +10,13 @@ services:
       - ipfix-network
     restart: unless-stopped
 
+  ipfixsend:
+    image: ipfixcol2:2.1
+    container_name: ipfixsend
+    networks:
+      - ipfix-network
+    restart: unless-stopped
+
   ipfix-generator:
     image: ghcr.io/jfwenisch/ipfix-generator:latest
     container_name: ipfix-generator

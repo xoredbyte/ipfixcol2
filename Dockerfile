@@ -18,6 +18,7 @@ echo $TZ > /etc/timezone && \
     iproute2 \
     tcpdump \
     htop \
+    iotop \
     software-properties-common \
     cmake \
     curl \
@@ -50,7 +51,7 @@ RUN git clone https://github.com/CESNET/libfds.git /libfds \
     && cd /libfds \
     && mkdir -p build && cd build \
     && cmake .. -DCMAKE_INSTALL_PREFIX=/usr \
-    && make \
+    && make \   
     && make install
 
 # Copy local ipfixcol2 source code into the container
