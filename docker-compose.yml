@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   ipfixcol:
-    image: ipfixcol2:2.0
+    image: ipfixcol2:2.1
     container_name: ipfixcol
     ports:
       - "4739:4739"
