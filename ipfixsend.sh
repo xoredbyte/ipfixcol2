@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEST="localhost"
+DEST="ipfixcol"
 PORT=4739
 PROTO="UDP"
 INPUT="sample.ipfix"

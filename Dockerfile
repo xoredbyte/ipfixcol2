@@ -19,6 +19,7 @@ echo $TZ > /etc/timezone && \
     tcpdump \
     htop \
     iotop \
+    nano \
     software-properties-common \
     cmake \
     curl \
