@@ -4,25 +4,28 @@ DEST="localhost"
 PORT=4739
 PROTO="UDP"
 INPUT="sample.ipfix"
-N=1000000000
+N=""          # empty means infinite sends
+SPEED="1G"    # Default speed 1Gbps
+CORES=4       # Number of cores to use
 
-# Initial R value
-R=100000.0
-
-# Number of cores to use (user configurable)
-CORES=4
+# Base ODID
+BASE_ODID=1111
 
 # Store PIDs of all running senders
 declare -a SENDER_PIDS=()
 
 # Function to start ipfixsend2 instances
 start_senders() {
-    echo "Starting $CORES ipfixsend2 processes with R=$R"
+    echo "Starting $CORES ipfixsend2 processes with speed=$SPEED"
     SENDER_PIDS=()  # reset array
     for ((core=0; core<CORES; core++)); do
-        # Pin each process to a specific CPU core
-        taskset -c "$core" ipfixsend2 -d "$DEST" -p "$PORT" -t "$PROTO" \
-            -i "$INPUT" -n "$N" -R "$R" &
+        ODID=$((BASE_ODID + core))
+        echo "Launching core $core with ODID=$ODID"
+        
+        CMD="taskset -c $core ipfixsend2 -d $DEST -p $PORT -t $PROTO -i $INPUT -s $SPEED -O $ODID"
+        [[ -n "$N" ]] && CMD="$CMD -n $N"
+        
+        eval "$CMD &"
         SENDER_PIDS+=($!)
     done
 }
@@ -38,24 +41,24 @@ stop_senders() {
 # Start the first run
 start_senders
 
-# Loop for user input
+# Loop for user input to adjust cores or speed dynamically
 while true; do
-    read -p "Enter new R value or new core count (e.g. R=2000 or C=8, 'q' to quit): " INPUT_VAL
+    read -p "Enter new core count (C=<num>), new speed (S=<value>, e.g., 500M), or 'q' to quit: " INPUT_VAL
     if [[ "$INPUT_VAL" == "q" ]]; then
         echo "Stopping..."
         stop_senders
         break
-    elif [[ "$INPUT_VAL" =~ ^R=([0-9]+(\.[0-9]+)?)$ ]]; then
-        R="${BASH_REMATCH[1]}"
-        echo "Updating R to $R..."
-        stop_senders
-        start_senders
     elif [[ "$INPUT_VAL" =~ ^C=([0-9]+)$ ]]; then
         CORES="${BASH_REMATCH[1]}"
         echo "Updating core count to $CORES..."
         stop_senders
         start_senders
+    elif [[ "$INPUT_VAL" =~ ^S=([0-9]+[KMG]?)$ ]]; then
+        SPEED="${BASH_REMATCH[1]}"
+        echo "Updating speed to $SPEED..."
+        stop_senders
+        start_senders
     else
-        echo "Invalid input. Use 'R=<rate>' or 'C=<cores>' or 'q' to quit."
+        echo "Invalid input. Use 'C=<cores>' or 'S=<speed>' (e.g., 500M), or 'q' to quit."
     fi
 done
