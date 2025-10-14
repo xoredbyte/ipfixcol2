@@ -1,0 +1,31 @@
+<!-- 
+  Receive flow data over UDP, convert them into JSON and provide them as
+  a server on local port
+-->
+<ipfixcol2>
+  <!-- Input plugins -->
+  <inputPlugins>
+    <input>
+      <name>UDP collector</name>
+      <plugin>udp</plugin>
+      <params>
+        <!-- List on port 4739 -->
+        <localPort>4739</localPort>
+        <!-- Bind to all local adresses -->
+        <localIPAddress></localIPAddress>
+      </params>
+    </input>
+  </inputPlugins>
+
+  <!-- Output plugins -->
+  <outputPlugins>
+    <output>
+      <name>Dummy output</name>
+      <plugin>dummy</plugin>
+    <params>
+        <delay>0</delay>
+        <stats>true</stats>
+    </params>
+  </output>
+  </outputPlugins>
+</ipfixcol2>
