@@ -1,7 +1,7 @@
 
 services:
   ipfixcol:
-    image: ipfixcol2:2.1
+    image: ipfixcol2:2.2
     container_name: ipfixcol
     ports:
       - "4739:4739"
