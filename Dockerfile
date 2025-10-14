@@ -15,7 +15,7 @@ RUN ln -fs /usr/share/zoneinfo/$TZ /etc/localtime && \
 echo $TZ > /etc/timezone && \
     apt update && \
     apt-get install -y \
-    iproute 2 \
+    iproute2 \
     tcpdump \
     htop \
     software-properties-common \

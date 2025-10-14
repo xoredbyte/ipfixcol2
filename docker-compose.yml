@@ -1,4 +1,3 @@
-version: '3.8'
 
 services:
   ipfixcol:
@@ -53,6 +52,30 @@ services:
     networks:
       - ipfix-network
     restart: unless-stopped
+  # Add Netdata
+  netdata:
+    image: netdata/netdata:latest
+    container_name: netdata
+    hostname: netdata
+    ports:
+      - "19999:19999"  # Netdata UI port
+    cap_add:
+      - SYS_PTRACE
+      - SYS_ADMIN
+    security_opt:
+      - apparmor=unconfined
+    volumes:
+      - netdataconfig:/etc/netdata
+      - netdatalib:/var/lib/netdata
+      - netdatacache:/var/cache/netdata
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+    networks:
+      - ipfix-network
+    restart: unless-stopped
+  
 
 networks:
   ipfix-network:
@@ -61,3 +84,6 @@ networks:
 volumes:
   prometheus_data:
   grafana_data:
+  netdataconfig:
+  netdatalib:
+  netdatacache:
