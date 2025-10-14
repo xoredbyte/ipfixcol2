@@ -169,12 +169,12 @@ stats_update(struct instance_data *inst, ipx_msg_ipfix_t *msg)
             if (now_ms >= value) {
                 uint64_t latency = now_ms - value;
                 /* Sanity check: ignore unreasonable latencies (> 1 hour) */
-                if (latency <= 3600000) {
+                //if (latency <= 3600000) {
                     atomic_add_u64(&inst->total_latency_ms, latency);
                     atomic_add_u64(&inst->latency_count, 1);
                     /* Update timestamp of last latency measurement */
                     atomic_store_explicit(&inst->last_latency_update_ms, now_ms, memory_order_relaxed);
-                }
+                //}
             }
         }
 
