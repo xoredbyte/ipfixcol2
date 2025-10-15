@@ -17,6 +17,7 @@ echo $TZ > /etc/timezone && \
     apt-get install -y \
     iproute2 \
     tcpdump \
+    iputils-ping \
     htop \
     iotop \
     nano \
@@ -48,6 +49,8 @@ echo $TZ > /etc/timezone && \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone and build libfds (a required dependency)
+RUN mkdir -p /etc/libfds/system/elements/
+COPY ./cdot.xml /etc/libfds/system/elements/cdot.xml
 RUN git clone https://github.com/CESNET/libfds.git /libfds \
     && cd /libfds \
     && mkdir -p build && cd build \
@@ -62,6 +65,7 @@ COPY ./ ./ipfixcol2/
 WORKDIR /ipfixcol2
 RUN rm -rf build && mkdir build && cd build && cmake .. && make && make install
 COPY ./startup.xml /usr/local/etc/ipfixcol2/startup.xml
+
 COPY ./sample.ipfix ./ipfixcol2/ 
 COPY ./ipfixsend.sh ./ipfixcol2/ 
 
@@ -69,10 +73,11 @@ COPY ./ipfixsend.sh ./ipfixcol2/
 
 # Expose necessary ports for ipfixcol2
 EXPOSE 4739 9995
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+#COPY entrypoint.sh /entrypoint.sh
+#RUN chmod +x /entrypoint.sh
 
 # Set the entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+#ENTRYPOINT ["/entrypoint.sh"]
 
-#Test Change
+# Keep container running
+CMD ["tail", "-f", "/dev/null"]

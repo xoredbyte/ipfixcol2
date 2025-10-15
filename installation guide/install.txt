@@ -1,0 +1,84 @@
+copy these to home directory 
+1.CMakeLists.txt  
+2.dummy.c
+3.startup.xml 
+4.sample.ipfix
+5.ipfixsend.sh
+
+
+#Install all dependencies
+
+sudo apt update
+
+sudo apt-get install gcc g++ cmake make python3-docutils zlib1g-dev librdkafka-dev libxml2-dev liblz4-dev libzstd-dev libmicrohttpd12 libmicrohttpd-dev pkg-config -y
+
+
+#Clone,Build and Install libfds
+
+
+#Copy cdot.xml file for supporting CDOT PEN
+
+cd ~
+sudo cp cdot.xml /etc/libfds/system/elements/
+
+
+
+#Clone ipfixcol2
+
+git clone https://github.com/CESNET/ipfixcol2.git
+
+#Modify cmakelists
+mv ipfixcol2/src/plugins/output/dummy/CMakeLists.txt ipfixcol2/src/plugins/output/dummy/CMakeLists.txt.bak
+cp CMakeLists.txt ipfixcol2/src/plugins/output/dummy/
+
+#Modify dummy.c
+mv ipfixcol2/src/plugins/output/dummy/dummy.c ipfixcol2/src/plugins/output/dummy/dummy.c.bak
+cp dummy.c ipfixcol2/src/plugins/output/dummy/
+
+
+#Build and Install ipfixcol2
+cd ipfixcol2
+mkdir build && cd build && cmake ..
+make
+sudo make install
+
+
+#Copy startup.xml with dummy plugin
+cd ~
+sudo mkdir -p /usr/local/etc/ipfixcol2
+sudo cp startup.xml /usr/local/etc/ipfixcol2/
+
+ipfixcol2 &
+
+#verify metrics 
+curl localhost:9100 
+
+
+
+#prometheus
+
+sudo apt install prometheus -y
+sudo systemctl stop prometheus-node-exporter
+sudo systemctl disable prometheus-node-exporter
+
+curl localhost:9090/metrics
+
+#Grafana
+
+# Add Grafana GPG key and repo
+wget -q -O - https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/grafana.gpg
+ 
+echo "deb [signed-by=/usr/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+ 
+ 
+# Install Grafana
+sudo apt-get update
+sudo apt-get install -y grafana
+ 
+# Enable and start Grafana service
+sudo systemctl enable grafana-server
+sudo systemctl start grafana-server
+
+
+#verify grafana 
+curl localhost:3000

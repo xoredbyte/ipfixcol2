@@ -1,7 +1,7 @@
 
 services:
   ipfixcol:
-    image: ipfixcol2:2.2
+    image: ipfixcol2:4.0
     container_name: ipfixcol
     ports:
       - "4739:4739"
@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
 
   ipfixsend:
-    image: ipfixcol2:2.2
+    image: ipfixcol2:4.0
     container_name: ipfixsend
     networks:
       - ipfix-network

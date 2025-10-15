@@ -1,6 +1,6 @@
 #!/bin/bash
 
-DEST="ipfixcol"
+DEST="localhost"
 PORT=4739
 PROTO="UDP"
 INPUT="sample.ipfix"
@@ -9,7 +9,7 @@ SPEED="1G"    # Default speed 1Gbps
 CORES=4       # Number of cores to use
 
 # Base ODID
-BASE_ODID=1111
+BASE_ODID=57786
 
 # Store PIDs of all running senders
 declare -a SENDER_PIDS=()
