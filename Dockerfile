@@ -50,7 +50,7 @@ echo $TZ > /etc/timezone && \
 
 # Clone and build libfds (a required dependency)
 RUN mkdir -p /etc/libfds/system/elements/
-COPY ./cdot.xml /etc/libfds/system/elements/cdot.xml
+COPY ./nccc.xml /etc/libfds/system/elements/nccc.xml
 RUN git clone https://github.com/CESNET/libfds.git /libfds \
     && cd /libfds \
     && mkdir -p build && cd build \
